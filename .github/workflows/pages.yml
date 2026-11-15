@@ -26,13 +26,14 @@ jobs:
 
   deploy:
     needs: test
+    # Only publish main, including when the workflow is started manually.
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/configure-pages@v5
       # Cache-bust scripts so players get the new version straight after a deploy.
       - run: sed -i "s/__BUILD__/${GITHUB_SHA::8}/g" public/index.html
       - uses: actions/upload-pages-artifact@v3
